@@ -60,12 +60,16 @@ function RangeSlider({ min, max, value, onChange }: { min: number; max: number; 
       </div>
       <div className="relative h-1 rounded-full" style={{ background: '#e5e5e5' }}>
         <div className="absolute h-1 rounded-full" style={{ background: '#0071e3', left: `${pct(value[0])}%`, right: `${100 - pct(value[1])}%` }} />
-        <input type="range" min={min} max={max} step={50} value={value[0]}
+        <input
+          type="range" min={min} max={max} step={50} value={value[0]}
           onChange={e => { const v = Number(e.target.value); if (v < value[1]) onChange([v, value[1]]); }}
-          className="absolute inset-0 w-full opacity-0 cursor-pointer" />
-        <input type="range" min={min} max={max} step={50} value={value[1]}
+          className="absolute inset-0 w-full opacity-0 cursor-pointer"
+        />
+        <input
+          type="range" min={min} max={max} step={50} value={value[1]}
           onChange={e => { const v = Number(e.target.value); if (v > value[0]) onChange([value[0], v]); }}
-          className="absolute inset-0 w-full opacity-0 cursor-pointer" />
+          className="absolute inset-0 w-full opacity-0 cursor-pointer"
+        />
       </div>
     </div>
   );
@@ -77,7 +81,7 @@ export function CategoryPage() {
   const meta = CATEGORY_META[categoryKey];
   const guides = GUIDES[categoryKey] || [];
 
-  const [filtersOpen, setFiltersOpen] = useState(false);
+  const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
   const [sortBy, setSortBy] = useState<SortOption>('featured');
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 4500]);
   const [selectedConditions, setSelectedConditions] = useState<Set<Condition>>(new Set());
@@ -112,6 +116,7 @@ export function CategoryPage() {
     if (selectedChips.size) pool = pool.filter(p => selectedChips.has(p.chip));
     if (selectedRam.size) pool = pool.filter(p => p.ram && selectedRam.has(p.ram));
     if (selectedStorage.size) pool = pool.filter(p => p.storage && selectedStorage.has(p.storage));
+
     return [...pool].sort((a, b) => {
       if (sortBy === 'price-asc') return a.price - b.price;
       if (sortBy === 'price-desc') return b.price - a.price;
@@ -136,11 +141,15 @@ export function CategoryPage() {
       <div>
         <div className="relative">
           <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: '#6e6e73' }} />
-          <input value={searchQ} onChange={e => setSearchQ(e.target.value)} placeholder="Search products…"
+          <input
+            value={searchQ}
+            onChange={e => setSearchQ(e.target.value)}
+            placeholder="Search products…"
             className="w-full pl-9 pr-4 py-2.5 rounded-xl outline-none"
             style={{ background: '#f5f5f7', fontSize: '14px', color: '#1d1d1f', border: '1.5px solid transparent' }}
-            onFocus={e => (e.currentTarget.style.borderColor = '#0071e3')}
-            onBlur={e => (e.currentTarget.style.borderColor = 'transparent')} />
+            onFocus={(e) => (e.currentTarget.style.borderColor = '#0071e3')}
+            onBlur={(e) => (e.currentTarget.style.borderColor = 'transparent')}
+          />
         </div>
       </div>
       <div>
@@ -149,21 +158,29 @@ export function CategoryPage() {
       </div>
       <div>
         <div style={{ fontSize: '13px', fontWeight: 600, color: '#1d1d1f', letterSpacing: '0.04em', textTransform: 'uppercase', marginBottom: '4px' }}>Condition</div>
-        {CONDITIONS.map(c => <FilterCheckbox key={c} label={CONDITION_LABELS[c]} checked={selectedConditions.has(c)} onChange={() => setSelectedConditions(s => toggleSet(s, c))} />)}
+        {CONDITIONS.map(c => (
+          <FilterCheckbox key={c} label={CONDITION_LABELS[c]} checked={selectedConditions.has(c)} onChange={() => setSelectedConditions(s => toggleSet(s, c))} />
+        ))}
       </div>
       <div>
         <div style={{ fontSize: '13px', fontWeight: 600, color: '#1d1d1f', letterSpacing: '0.04em', textTransform: 'uppercase', marginBottom: '4px' }}>Processor</div>
-        {CHIPS.map(c => <FilterCheckbox key={c} label={c} checked={selectedChips.has(c)} onChange={() => setSelectedChips(s => toggleSet(s, c))} />)}
+        {CHIPS.map(c => (
+          <FilterCheckbox key={c} label={c} checked={selectedChips.has(c)} onChange={() => setSelectedChips(s => toggleSet(s, c))} />
+        ))}
       </div>
       {(categoryKey === 'macbook' || categoryKey === 'imac') && (
         <div>
           <div style={{ fontSize: '13px', fontWeight: 600, color: '#1d1d1f', letterSpacing: '0.04em', textTransform: 'uppercase', marginBottom: '4px' }}>RAM</div>
-          {RAMS.map(r => <FilterCheckbox key={r} label={`${r}GB`} checked={selectedRam.has(r)} onChange={() => setSelectedRam(s => toggleSet(s, r))} />)}
+          {RAMS.map(r => (
+            <FilterCheckbox key={r} label={`${r}GB`} checked={selectedRam.has(r)} onChange={() => setSelectedRam(s => toggleSet(s, r))} />
+          ))}
         </div>
       )}
       <div>
         <div style={{ fontSize: '13px', fontWeight: 600, color: '#1d1d1f', letterSpacing: '0.04em', textTransform: 'uppercase', marginBottom: '4px' }}>Storage</div>
-        {STORAGES.map(s => <FilterCheckbox key={s} label={s >= 1000 ? `${s / 1000}TB` : `${s}GB`} checked={selectedStorage.has(s)} onChange={() => setSelectedStorage(st => toggleSet(st, s))} />)}
+        {STORAGES.map(s => (
+          <FilterCheckbox key={s} label={s >= 1000 ? `${s / 1000}TB` : `${s}GB`} checked={selectedStorage.has(s)} onChange={() => setSelectedStorage(st => toggleSet(st, s))} />
+        ))}
       </div>
       {activeFilters > 0 && (
         <button onClick={clearFilters} className="flex items-center gap-2 py-2.5 px-4 rounded-full justify-center" style={{ background: '#fff3f3', color: '#e53e3e', fontSize: '13px', fontWeight: 500 }}>
@@ -172,6 +189,7 @@ export function CategoryPage() {
       )}
     </div>
   );
+
   return (
     <>
       <section className="relative overflow-hidden" style={{ paddingTop: '56px' }}>
@@ -185,8 +203,12 @@ export function CategoryPage() {
                 <ChevronRight size={12} style={{ color: 'rgba(255,255,255,0.4)' }} />
                 <span style={{ fontSize: '13px', color: 'rgba(255,255,255,0.9)' }}>{meta.label}</span>
               </div>
-              <h1 style={{ fontSize: 'clamp(2rem, 5vw, 3.5rem)', fontWeight: 700, color: '#fff', letterSpacing: '-0.03em', lineHeight: 1.1 }}>{meta.label}</h1>
-              <p style={{ fontSize: '17px', color: 'rgba(255,255,255,0.8)', marginTop: '8px', maxWidth: '400px' }}>{meta.description}</p>
+              <h1 style={{ fontSize: 'clamp(2rem, 5vw, 3.5rem)', fontWeight: 700, color: '#fff', letterSpacing: '-0.03em', lineHeight: 1.1 }}>
+                {meta.label}
+              </h1>
+              <p style={{ fontSize: '17px', color: 'rgba(255,255,255,0.8)', marginTop: '8px', maxWidth: '400px' }}>
+                {meta.description}
+              </p>
             </div>
           </div>
         </div>
@@ -209,20 +231,31 @@ export function CategoryPage() {
         </div>
       </section>
 
-      <section style={{ background: '#f5f5f7', padding: '64px 0' }}>
+      <section style={{ background: '#f5f5f7', padding: '48px 0' }}>
         <div className="max-w-[1200px] mx-auto px-6">
           <div className="flex items-center justify-between mb-6 flex-wrap gap-4">
             <div>
-              <h2 style={{ fontSize: '1.8rem', fontWeight: 700, color: '#1d1d1f', letterSpacing: '-0.025em' }}>{filtered.length} {meta.label} available</h2>
-              <p style={{ fontSize: '15px', color: '#6e6e73', marginTop: '4px' }}>All certified, tested, and warranted.</p>
+              <h2 style={{ fontSize: '1.6rem', fontWeight: 700, color: '#1d1d1f', letterSpacing: '-0.025em' }}>
+                {filtered.length} {meta.label} available
+              </h2>
+              <p style={{ fontSize: '14px', color: '#6e6e73', marginTop: '2px' }}>All certified, tested, and warranted.</p>
             </div>
             <div className="flex items-center gap-3">
-              <button className="flex items-center gap-2 px-4 py-2.5 rounded-full" style={{ background: '#0071e3', fontSize: '14px', color: '#fff', fontWeight: 500 }} onClick={() => setFiltersOpen(true)}>
-                <SlidersHorizontal size={15} /> Filter & Sort
+              <button
+                className="flex items-center gap-2 px-4 py-2.5 rounded-full lg:hidden"
+                style={{ background: '#0071e3', fontSize: '14px', color: '#fff', fontWeight: 500 }}
+                onClick={() => setMobileFiltersOpen(true)}
+              >
+                <SlidersHorizontal size={15} /> Filters
                 {activeFilters > 0 && <span className="w-5 h-5 rounded-full flex items-center justify-center" style={{ background: '#fff', color: '#0071e3', fontSize: '11px', fontWeight: 600 }}>{activeFilters}</span>}
               </button>
               <div className="relative">
-                <select value={sortBy} onChange={e => setSortBy(e.target.value as SortOption)} className="appearance-none pr-8 pl-4 py-2.5 rounded-full outline-none cursor-pointer" style={{ background: '#fff', fontSize: '14px', color: '#1d1d1f', border: '1px solid rgba(0,0,0,0.1)' }}>
+                <select
+                  value={sortBy}
+                  onChange={e => setSortBy(e.target.value as SortOption)}
+                  className="appearance-none pr-8 pl-4 py-2.5 rounded-full outline-none cursor-pointer"
+                  style={{ background: '#fff', fontSize: '14px', color: '#1d1d1f', border: '1px solid rgba(0,0,0,0.1)' }}
+                >
                   <option value="featured">Featured</option>
                   <option value="price-asc">Price: Low to High</option>
                   <option value="price-desc">Price: High to Low</option>
@@ -236,7 +269,7 @@ export function CategoryPage() {
           </div>
 
           {activeFilters > 0 && (
-            <div className="flex gap-2 flex-wrap mb-6">
+            <div className="flex gap-2 flex-wrap mb-5">
               {[...selectedConditions].map(c => (
                 <button key={c} onClick={() => setSelectedConditions(s => toggleSet(s, c))} className="flex items-center gap-1.5 px-3 py-1.5 rounded-full" style={{ background: '#fff', color: '#0071e3', fontSize: '12px', border: '1px solid #0071e3' }}>
                   {CONDITION_LABELS[c]} <X size={11} />
@@ -260,31 +293,66 @@ export function CategoryPage() {
             </div>
           )}
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-            {filtered.map((product, i) => <ProductCard key={product.id} product={product} index={i} />)}
-          </div>
-
-          {filtered.length === 0 && (
-            <div className="flex flex-col items-center justify-center py-24 text-center">
-              <div className="w-16 h-16 rounded-2xl flex items-center justify-center mb-4" style={{ background: '#fff' }}>
-                <Search size={28} style={{ color: '#6e6e73' }} />
+          <div className="flex gap-8 items-start">
+            <aside
+              className="hidden lg:block flex-shrink-0 sticky top-20"
+              style={{ width: '260px', background: '#fff', borderRadius: '16px', padding: '24px', boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}
+            >
+              <div className="flex items-center justify-between mb-5">
+                <span style={{ fontSize: '15px', fontWeight: 600, color: '#1d1d1f' }}>Filters</span>
+                {activeFilters > 0 && (
+                  <button onClick={clearFilters} style={{ fontSize: '12px', color: '#0071e3', fontWeight: 500 }}>Clear all</button>
+                )}
               </div>
-              <div style={{ fontSize: '20px', fontWeight: 600, color: '#1d1d1f', marginBottom: '8px' }}>No products found</div>
-              <div style={{ fontSize: '15px', color: '#6e6e73', marginBottom: '20px' }}>Try adjusting your filters</div>
-              <button onClick={clearFilters} className="px-5 py-2.5 rounded-full" style={{ background: '#0071e3', color: '#fff', fontSize: '15px' }}>Clear filters</button>
+              <FilterPanel />
+            </aside>
+
+            <div className="flex-1 min-w-0">
+              {filtered.length === 0 ? (
+                <div className="flex flex-col items-center justify-center py-24 text-center">
+                  <div className="w-16 h-16 rounded-2xl flex items-center justify-center mb-4" style={{ background: '#fff' }}>
+                    <Search size={28} style={{ color: '#6e6e73' }} />
+                  </div>
+                  <div style={{ fontSize: '20px', fontWeight: 600, color: '#1d1d1f', marginBottom: '8px' }}>No products found</div>
+                  <div style={{ fontSize: '15px', color: '#6e6e73', marginBottom: '20px' }}>Try adjusting your filters</div>
+                  <button onClick={clearFilters} className="px-5 py-2.5 rounded-full" style={{ background: '#0071e3', color: '#fff', fontSize: '15px' }}>
+                    Clear filters
+                  </button>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5">
+                  {filtered.map((product, i) => (
+                    <ProductCard key={product.id} product={product} index={i} />
+                  ))}
+                </div>
+              )}
             </div>
-          )}
+          </div>
         </div>
       </section>
 
       <AnimatePresence>
-        {filtersOpen && (
+        {mobileFiltersOpen && (
           <>
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50" style={{ background: 'rgba(0,0,0,0.4)' }} onClick={() => setFiltersOpen(false)} />
-            <motion.div initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%' }} transition={{ type: 'tween', duration: 0.3, ease: 'easeOut' }} className="fixed right-0 top-0 bottom-0 w-full sm:w-96 z-50 flex flex-col" style={{ background: '#fff', boxShadow: '-4px 0 24px rgba(0,0,0,0.15)' }}>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-50 lg:hidden"
+              style={{ background: 'rgba(0,0,0,0.4)' }}
+              onClick={() => setMobileFiltersOpen(false)}
+            />
+            <motion.div
+              initial={{ x: '100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '100%' }}
+              transition={{ type: 'tween', duration: 0.3, ease: 'easeOut' }}
+              className="fixed right-0 top-0 bottom-0 w-full sm:w-96 z-50 flex flex-col lg:hidden"
+              style={{ background: '#fff', boxShadow: '-4px 0 24px rgba(0,0,0,0.15)' }}
+            >
               <div className="flex items-center justify-between px-6 py-4 border-b" style={{ borderColor: 'rgba(0,0,0,0.08)' }}>
                 <span style={{ fontSize: '17px', fontWeight: 600, color: '#1d1d1f' }}>Filters</span>
-                <button onClick={() => setFiltersOpen(false)} className="w-8 h-8 rounded-full flex items-center justify-center" style={{ background: '#f5f5f7' }}>
+                <button onClick={() => setMobileFiltersOpen(false)} className="w-8 h-8 rounded-full flex items-center justify-center" style={{ background: '#f5f5f7' }}>
                   <X size={16} />
                 </button>
               </div>
@@ -292,7 +360,11 @@ export function CategoryPage() {
                 <FilterPanel />
               </div>
               <div className="px-6 py-4 border-t" style={{ borderColor: 'rgba(0,0,0,0.08)' }}>
-                <button onClick={() => setFiltersOpen(false)} className="w-full py-3 rounded-full" style={{ background: '#0071e3', color: '#fff', fontSize: '15px', fontWeight: 500 }}>
+                <button
+                  onClick={() => setMobileFiltersOpen(false)}
+                  className="w-full py-3 rounded-full"
+                  style={{ background: '#0071e3', color: '#fff', fontSize: '15px', fontWeight: 500 }}
+                >
                   Show {filtered.length} results
                 </button>
               </div>
@@ -305,12 +377,24 @@ export function CategoryPage() {
         <section style={{ background: '#fff', padding: '64px 0' }}>
           <div className="max-w-[1200px] mx-auto px-6">
             <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>
-              <div className="inline-block px-3 py-1 rounded-full mb-3" style={{ background: '#f5f5f7', color: '#6e6e73', fontSize: '13px', fontWeight: 500 }}>Buying Guide</div>
-              <h2 style={{ fontSize: '2rem', fontWeight: 700, color: '#1d1d1f', letterSpacing: '-0.025em', marginBottom: '32px' }}>Everything you need to know</h2>
+              <div className="inline-block px-3 py-1 rounded-full mb-3" style={{ background: '#f5f5f7', color: '#6e6e73', fontSize: '13px', fontWeight: 500 }}>
+                Buying Guide
+              </div>
+              <h2 style={{ fontSize: '2rem', fontWeight: 700, color: '#1d1d1f', letterSpacing: '-0.025em', marginBottom: '32px' }}>
+                Everything you need to know
+              </h2>
             </motion.div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {guides.map((guide, i) => (
-                <motion.div key={guide.title} initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} className="p-6 rounded-2xl" style={{ background: '#f5f5f7' }}>
+                <motion.div
+                  key={guide.title}
+                  initial={{ opacity: 0, y: 16 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.1 }}
+                  className="p-6 rounded-2xl"
+                  style={{ background: '#f5f5f7' }}
+                >
                   <h3 style={{ fontSize: '17px', fontWeight: 600, color: '#1d1d1f', marginBottom: '12px' }}>{guide.title}</h3>
                   <ul className="flex flex-col gap-2">
                     {guide.points.map(p => (
@@ -336,8 +420,12 @@ export function CategoryPage() {
               <span className="w-1.5 h-1.5 rounded-full" style={{ background: '#0071e3' }} />
               Price Match Guarantee
             </div>
-            <h2 style={{ fontSize: 'clamp(1.6rem, 3vw, 2.4rem)', fontWeight: 700, color: '#fff', letterSpacing: '-0.025em', marginBottom: '12px' }}>Found it cheaper? We'll match it.</h2>
-            <p style={{ fontSize: '17px', color: 'rgba(255,255,255,0.6)', marginBottom: '28px' }}>If you find the same {meta.label.toLowerCase().slice(0, -1)} in the same condition cheaper, contact us and we'll price-match it.</p>
+            <h2 style={{ fontSize: 'clamp(1.6rem, 3vw, 2.4rem)', fontWeight: 700, color: '#fff', letterSpacing: '-0.025em', marginBottom: '12px' }}>
+              Found it cheaper? We'll match it.
+            </h2>
+            <p style={{ fontSize: '17px', color: 'rgba(255,255,255,0.6)', marginBottom: '28px' }}>
+              If you find the same {meta.label.toLowerCase().slice(0, -1)} in the same condition cheaper, contact us and we'll price-match it.
+            </p>
             <Link to="/contact" className="inline-flex items-center gap-2 px-6 py-3 rounded-full" style={{ background: '#0071e3', color: '#fff', fontSize: '16px', fontWeight: 500 }}>
               Contact Us <ChevronRight size={16} />
             </Link>
