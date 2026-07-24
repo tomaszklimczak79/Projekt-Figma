@@ -28,12 +28,12 @@ const categories = [
     to: "/category/imac",
   },
   {
-    name: "Accessories",
-    desc: "Magic Keyboard, Mouse & more",
-    count: "52 items",
-    image: "https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=600&h=400&fit=crop&auto=format",
-    alt: "Apple Accessories",
-    to: "/category/accessory",
+    name: "Apple Watch",
+    desc: "All series, GPS & Cellular",
+    count: "24 devices",
+    image: "https://images.unsplash.com/photo-1434493789847-2f02dc6ca35d?w=600&h=400&fit=crop&auto=format",
+    alt: "Apple Watch",
+    to: "/category/applewatch",
   },
   {
     name: "iPhones",

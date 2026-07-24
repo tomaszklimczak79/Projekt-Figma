@@ -1,21 +1,57 @@
-import { useState, useEffect } from "react";
-import { ShoppingBag, Search, Menu, X } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
+import { ShoppingBag, Search, Menu, X, Globe } from "lucide-react";
 import { Link, useNavigate } from "../router";
 import { useApp } from "../store/AppContext";
+
+const LANGUAGES = [
+  { code: 'EN', label: 'English' },
+  { code: 'PL', label: 'Polski' },
+  { code: 'DE', label: 'Deutsch' },
+  { code: 'FR', label: 'Francais' },
+  { code: 'RU', label: 'Russian' },
+  { code: 'UK', label: 'Ukrainian' },
+  { code: 'CS', label: 'Czech' },
+  { code: 'DA', label: 'Dansk' },
+  { code: 'NL', label: 'Nederlands' },
+  { code: 'FI', label: 'Suomi' },
+  { code: 'NO', label: 'Norsk Bokmal' },
+  { code: 'PT', label: 'Portugues' },
+  { code: 'SL', label: 'Slovenscina' },
+  { code: 'SK', label: 'Slovencina' },
+  { code: 'SV', label: 'Svenska' },
+  { code: 'BG', label: 'Bulgarian' },
+  { code: 'RO', label: 'Romana' },
+  { code: 'EL', label: 'Greek' },
+  { code: 'HR', label: 'Hrvatski' },
+];
 
 const navLinks = [
   { label: "MacBooks", to: "/category/macbook" },
   { label: "iPads", to: "/category/ipad" },
   { label: "iMacs", to: "/category/imac" },
+  { label: "Watch", to: "/category/applewatch" },
+  { label: "iPhones", to: "/category/iphone" },
   { label: "Deals", to: "/shop?sort=savings" },
-  { label: "About", to: "/#why" },
 ];
 
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [langOpen, setLangOpen] = useState(false);
+  const [activeLang, setActiveLang] = useState('EN');
+  const langRef = useRef<HTMLDivElement>(null);
   const { cartCount, setCartOpen } = useApp();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const onClickOutside = (e: MouseEvent) => {
+      if (langRef.current && !langRef.current.contains(e.target as Node)) {
+        setLangOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', onClickOutside);
+    return () => document.removeEventListener('mousedown', onClickOutside);
+  }, []);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -64,6 +100,42 @@ export function Navbar() {
           </ul>
 
           <div className="flex items-center gap-1">
+            {/* Language switcher */}
+            <div ref={langRef} className="relative">
+              <button
+                className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg transition-colors"
+                style={{ fontSize: '13px', color: '#1d1d1f' }}
+                onMouseEnter={(e) => (e.currentTarget.style.background = '#f5f5f7')}
+                onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
+                onClick={() => setLangOpen(v => !v)}
+              >
+                <Globe size={15} />
+                <span style={{ fontWeight: 500 }}>{activeLang}</span>
+              </button>
+              {langOpen && (
+                <div
+                  className="absolute right-0 top-full mt-1 rounded-xl overflow-hidden"
+                  style={{ background: '#fff', boxShadow: '0 4px 24px rgba(0,0,0,0.12)', border: '1px solid rgba(0,0,0,0.08)', minWidth: '160px', zIndex: 100, maxHeight: '320px', overflowY: 'auto' }}
+                >
+                  {LANGUAGES.map(lang => (
+                    <button
+                      key={lang.code}
+                      className="w-full flex items-center justify-between px-4 py-2.5 transition-colors"
+                      style={{ fontSize: '14px', color: activeLang === lang.code ? '#0071e3' : '#1d1d1f', background: 'transparent', fontWeight: activeLang === lang.code ? 600 : 400 }}
+                      onMouseEnter={(e) => (e.currentTarget.style.background = '#f5f5f7')}
+                      onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
+                      onClick={() => { setActiveLang(lang.code); setLangOpen(false); }}
+                    >
+                      <span>{lang.label}</span>
+                      {activeLang === lang.code && (
+                        <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="#0071e3" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                      )}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+
             <button
               className="hidden md:flex items-center justify-center w-9 h-9 rounded-full transition-colors"
               style={{ color: "#1d1d1f" }}

@@ -1,6 +1,6 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { Search, Plus, Minus, ChevronRight } from 'lucide-react';
-import { Link } from '../router';
+import { Link, useLocation } from '../router';
 import { motion, AnimatePresence } from 'motion/react';
 
 const CATEGORIES = [
@@ -69,8 +69,14 @@ function FAQItem({ faq, isOpen, onToggle }: { faq: typeof FAQS[0]; isOpen: boole
 }
 
 export function FAQPage() {
-  const [activeCategory, setActiveCategory] = useState('all');
+  const { search } = useLocation();
+  const [activeCategory, setActiveCategory] = useState(() => new URLSearchParams(search).get('cat') || 'all');
   const [searchQ, setSearchQ] = useState('');
+
+  useEffect(() => {
+    const cat = new URLSearchParams(search).get('cat') || 'all';
+    setActiveCategory(cat);
+  }, [search]);
   const [openId, setOpenId] = useState<number | null>(1);
 
   const filtered = useMemo(() => {

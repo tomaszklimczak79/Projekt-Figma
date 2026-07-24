@@ -1,4 +1,4 @@
-export type Category = 'macbook' | 'ipad' | 'imac' | 'accessory' | 'iphone';
+export type Category = 'macbook' | 'ipad' | 'imac' | 'applewatch' | 'iphone';
 export type Condition = 'open-box' | 'like-new' | 'excellent' | 'good';
 
 export interface ProductSpec { label: string; value: string }
@@ -394,12 +394,12 @@ export const PRODUCTS: Product[] = [
     ],
     reviews: SAMPLE_REVIEWS,
   },
-  // Accessories
+  // Apple Watch
   {
     id: 'magic-keyboard-touch-id-silver',
     name: 'Magic Keyboard with Touch ID · Silver',
     shortName: 'Magic Keyboard Touch ID',
-    category: 'accessory', chip: '', storage: undefined, screenSize: 0,
+    category: 'applewatch', chip: '', storage: undefined, screenSize: 0,
     condition: 'open-box', price: 79, originalPrice: 129, batteryHealth: undefined,
     color: 'Silver', year: 2023,
     inStock: true, rating: 4.7, reviewCount: 43,
@@ -423,7 +423,7 @@ export const PRODUCTS: Product[] = [
     id: 'airpods-pro-2nd-gen-openbox',
     name: 'AirPods Pro (2nd Generation) · MagSafe',
     shortName: 'AirPods Pro 2nd Gen',
-    category: 'accessory', chip: 'H2', storage: undefined, screenSize: 0,
+    category: 'applewatch', chip: 'H2', storage: undefined, screenSize: 0,
     condition: 'open-box', price: 179, originalPrice: 249, batteryHealth: undefined,
     color: 'White', year: 2023,
     inStock: true, rating: 4.8, reviewCount: 67,
@@ -507,11 +507,11 @@ export const CATEGORY_META: Record<string, { label: string; slug: string; descri
     description: 'All-in-one iMac desktops — beautiful, powerful, certified.',
     image: 'https://images.unsplash.com/photo-1560195307-95127677e806?w=1200&h=500&fit=crop',
   },
-  accessory: {
-    label: 'Accessories',
-    slug: 'accessories',
-    description: 'Magic keyboards, mice, AirPods, and more.',
-    image: 'https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=1200&h=500&fit=crop',
+  applewatch: {
+    label: 'Apple Watch',
+    slug: 'applewatch',
+    description: 'Certified pre-owned Apple Watch — all series, all sizes.',
+    image: 'https://images.unsplash.com/photo-1434493789847-2f02dc6ca35d?w=1200&h=500&fit=crop',
   },
   iphone: {
     label: 'iPhones',

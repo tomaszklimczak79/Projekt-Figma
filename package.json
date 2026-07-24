@@ -3,9 +3,27 @@
   "private": true,
   "version": "0.0.1",
   "type": "module",
+  "description": "Premium e-commerce store for certified used & open box Apple products",
+  "author": "Tomasz Klimczak <tomaszklimczak79@github.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tomaszklimczak79/premium-apple-store.git"
+  },
+  "keywords": [
+    "apple",
+    "macbook",
+    "ipad",
+    "imac",
+    "e-commerce",
+    "refurbished",
+    "certified-used",
+    "react",
+    "typescript",
+    "tailwind"
+  ],
   "scripts": {
-    "build": "vite build",
-    "dev": "vite"
+    "build": "vite build"
   },
   "dependencies": {
     "@emotion/react": "11.14.0",

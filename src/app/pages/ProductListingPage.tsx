@@ -172,56 +172,37 @@ export function ProductListingPage() {
   return (
     <div style={{ paddingTop: '56px', background: '#fff', minHeight: '100vh' }}>
       {/* Header */}
-      {meta?.image ? (
-        <div className="relative overflow-hidden" style={{ height: '220px' }}>
-          <img src={meta.image} alt={meta.label} className="w-full h-full object-cover" />
-          <div className="absolute inset-0" style={{ background: 'linear-gradient(to right, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.2) 60%, transparent 100%)' }} />
-          <div className="absolute inset-0 flex items-center">
-            <div className="max-w-[1200px] mx-auto px-6 w-full">
-              <div className="flex items-center gap-2 mb-3">
-                <Link to="/" style={{ fontSize: '13px', color: 'rgba(255,255,255,0.65)' }}>Home</Link>
-                <ChevronRight size={12} style={{ color: 'rgba(255,255,255,0.4)' }} />
-                <Link to="/shop" style={{ fontSize: '13px', color: 'rgba(255,255,255,0.65)' }}>Shop</Link>
-                <ChevronRight size={12} style={{ color: 'rgba(255,255,255,0.4)' }} />
-                <span style={{ fontSize: '13px', color: 'rgba(255,255,255,0.9)' }}>{pageTitle}</span>
-              </div>
-              <h1 style={{ fontSize: 'clamp(1.8rem, 3vw, 2.8rem)', fontWeight: 700, color: '#fff', letterSpacing: '-0.03em', lineHeight: 1.1 }}>
+      <div style={{ background: '#f5f5f7', borderBottom: '1px solid rgba(0,0,0,0.06)' }}>
+        <div className="max-w-[1200px] mx-auto px-6 py-8">
+          <div className="flex items-center gap-2 mb-3">
+            <Link to="/" style={{ fontSize: '13px', color: '#6e6e73' }}>Home</Link>
+            <ChevronRight size={12} style={{ color: '#6e6e73' }} />
+            {category && <><Link to="/shop" style={{ fontSize: '13px', color: '#6e6e73' }}>Shop</Link><ChevronRight size={12} style={{ color: '#6e6e73' }} /></>}
+            <span style={{ fontSize: '13px', color: '#1d1d1f' }}>{pageTitle}</span>
+          </div>
+          <div className="flex items-end justify-between flex-wrap gap-4">
+            <div>
+              <h1 style={{ fontSize: 'clamp(1.8rem, 3vw, 2.4rem)', fontWeight: 700, color: '#1d1d1f', letterSpacing: '-0.025em' }}>
                 {pageTitle}
               </h1>
-              <p style={{ fontSize: '15px', color: 'rgba(255,255,255,0.75)', marginTop: '6px' }}>
+              <p style={{ fontSize: '15px', color: '#6e6e73', marginTop: '4px' }}>
                 {filtered.length} certified {filtered.length === 1 ? 'device' : 'devices'} available
               </p>
             </div>
           </div>
         </div>
-      ) : (
-        <div style={{ background: '#f5f5f7', borderBottom: '1px solid rgba(0,0,0,0.06)' }}>
-          <div className="max-w-[1200px] mx-auto px-6 py-8">
-            <div className="flex items-center gap-2 mb-3">
-              <Link to="/" style={{ fontSize: '13px', color: '#6e6e73' }}>Home</Link>
-              <ChevronRight size={12} style={{ color: '#6e6e73' }} />
-              <span style={{ fontSize: '13px', color: '#1d1d1f' }}>{pageTitle}</span>
-            </div>
-            <h1 style={{ fontSize: 'clamp(1.8rem, 3vw, 2.4rem)', fontWeight: 700, color: '#1d1d1f', letterSpacing: '-0.025em' }}>
-              {pageTitle}
-            </h1>
-            <p style={{ fontSize: '15px', color: '#6e6e73', marginTop: '4px' }}>
-              {filtered.length} certified {filtered.length === 1 ? 'device' : 'devices'} available
-            </p>
-          </div>
-        </div>
-      )}
+      </div>
 
       <div className="max-w-[1200px] mx-auto px-6 py-8">
         {/* Toolbar */}
         <div className="flex items-center justify-between gap-4 mb-6 flex-wrap">
           <button
             className="flex items-center gap-2 px-4 py-2.5 rounded-full transition-colors"
-            style={{ background: filtersOpen ? '#1d1d1f' : '#f5f5f7', fontSize: '14px', color: filtersOpen ? '#fff' : '#1d1d1f' }}
-            onClick={() => setFiltersOpen(!filtersOpen)}
+            style={{ background: '#0071e3', fontSize: '14px', color: '#fff', fontWeight: 500 }}
+            onClick={() => setFiltersOpen(true)}
           >
             <SlidersHorizontal size={15} /> Filters
-            {activeFilters > 0 && <span className="w-5 h-5 rounded-full flex items-center justify-center" style={{ background: '#0071e3', color: '#fff', fontSize: '11px' }}>{activeFilters}</span>}
+            {activeFilters > 0 && <span className="w-5 h-5 rounded-full flex items-center justify-center" style={{ background: '#fff', color: '#0071e3', fontSize: '11px', fontWeight: 600 }}>{activeFilters}</span>}
           </button>
 
           {/* Active filter chips */}
@@ -259,62 +240,78 @@ export function ProductListingPage() {
           </div>
         </div>
 
-        {/* Filter drawer — overlays content on all screen sizes */}
+        {/* Filter drawer - slides from RIGHT */}
         <AnimatePresence>
           {filtersOpen && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="fixed inset-0 z-50"
-              style={{ background: 'rgba(0,0,0,0.35)', backdropFilter: 'blur(2px)' }}
-              onClick={() => setFiltersOpen(false)}
-            >
+            <>
+              {/* Backdrop */}
               <motion.div
-                initial={{ x: '-100%' }}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="fixed inset-0 z-50"
+                style={{ background: 'rgba(0,0,0,0.4)' }}
+                onClick={() => setFiltersOpen(false)}
+              />
+              
+              {/* Drawer panel */}
+              <motion.div
+                initial={{ x: '100%' }}
                 animate={{ x: 0 }}
-                exit={{ x: '-100%' }}
-                transition={{ type: 'tween', duration: 0.28, ease: [0.25, 0.46, 0.45, 0.94] }}
-                className="absolute left-0 top-0 bottom-0 overflow-y-auto p-6"
-                style={{ background: '#fff', width: 'min(320px, 85vw)', boxShadow: '4px 0 32px rgba(0,0,0,0.12)' }}
-                onClick={e => e.stopPropagation()}
+                exit={{ x: '100%' }}
+                transition={{ type: 'tween', duration: 0.3, ease: 'easeOut' }}
+                className="fixed right-0 top-0 bottom-0 w-full sm:w-96 z-50 flex flex-col"
+                style={{ background: '#fff', boxShadow: '-4px 0 24px rgba(0,0,0,0.15)' }}
               >
-                <div className="flex items-center justify-between mb-6">
+                {/* Header */}
+                <div className="flex items-center justify-between px-6 py-4 border-b" style={{ borderColor: 'rgba(0,0,0,0.08)' }}>
                   <span style={{ fontSize: '17px', fontWeight: 600, color: '#1d1d1f' }}>Filters</span>
-                  <div className="flex items-center gap-3">
-                    {activeFilters > 0 && (
-                      <button onClick={clearFilters} style={{ fontSize: '13px', color: '#0071e3' }}>Clear all ({activeFilters})</button>
-                    )}
-                    <button onClick={() => setFiltersOpen(false)} className="w-8 h-8 rounded-full flex items-center justify-center" style={{ background: '#f5f5f7' }}>
-                      <X size={15} style={{ color: '#1d1d1f' }} />
-                    </button>
-                  </div>
+                  <button onClick={() => setFiltersOpen(false)} className="w-8 h-8 rounded-full flex items-center justify-center" style={{ background: '#f5f5f7' }}>
+                    <X size={16} />
+                  </button>
                 </div>
-                <FilterPanel />
+
+                {/* Scrollable content */}
+                <div className="flex-1 overflow-y-auto px-6 py-6">
+                  <FilterPanel />
+                </div>
+
+                {/* Footer */}
+                <div className="px-6 py-4 border-t" style={{ borderColor: 'rgba(0,0,0,0.08)' }}>
+                  <button
+                    onClick={() => setFiltersOpen(false)}
+                    className="w-full py-3 rounded-full"
+                    style={{ background: '#0071e3', color: '#fff', fontSize: '15px', fontWeight: 500 }}
+                  >
+                    Show {filtered.length} results
+                  </button>
+                </div>
               </motion.div>
-            </motion.div>
+            </>
           )}
         </AnimatePresence>
 
-        {/* Product grid — always full width */}
-        {filtered.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-24 text-center">
-            <div className="w-16 h-16 rounded-2xl flex items-center justify-center mb-4" style={{ background: '#f5f5f7' }}>
-              <Search size={28} style={{ color: '#6e6e73' }} />
+        {/* Product grid */}
+        <div>
+          {filtered.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-24 text-center">
+              <div className="w-16 h-16 rounded-2xl flex items-center justify-center mb-4" style={{ background: '#f5f5f7' }}>
+                <Search size={28} style={{ color: '#6e6e73' }} />
+              </div>
+              <div style={{ fontSize: '20px', fontWeight: 600, color: '#1d1d1f', marginBottom: '8px' }}>No products found</div>
+              <div style={{ fontSize: '15px', color: '#6e6e73', marginBottom: '20px' }}>Try adjusting your filters or search query</div>
+              <button onClick={clearFilters} className="px-5 py-2.5 rounded-full" style={{ background: '#0071e3', color: '#fff', fontSize: '15px' }}>
+                Clear filters
+              </button>
             </div>
-            <div style={{ fontSize: '20px', fontWeight: 600, color: '#1d1d1f', marginBottom: '8px' }}>No products found</div>
-            <div style={{ fontSize: '15px', color: '#6e6e73', marginBottom: '20px' }}>Try adjusting your filters or search query</div>
-            <button onClick={clearFilters} className="px-5 py-2.5 rounded-full" style={{ background: '#0071e3', color: '#fff', fontSize: '15px' }}>
-              Clear filters
-            </button>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-            {filtered.map((product, i) => (
-              <ProductCard key={product.id} product={product} index={i} />
-            ))}
-          </div>
-        )}
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5">
+              {filtered.map((product, i) => (
+                <ProductCard key={product.id} product={product} index={i} />
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

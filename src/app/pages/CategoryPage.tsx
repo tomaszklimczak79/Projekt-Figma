@@ -10,7 +10,7 @@ const SLUG_TO_CATEGORY: Record<string, Category> = {
   macbooks: 'macbook',
   ipads: 'ipad',
   imacs: 'imac',
-  accessories: 'accessory',
+  applewatch: 'applewatch',
   iphones: 'iphone',
 };
 
@@ -34,6 +34,8 @@ const CHIPS = ['M4', 'M3 Max', 'M3 Pro', 'M3', 'M2 Pro', 'M2', 'M1', 'A17 Pro', 
 const RAMS = [8, 16, 18, 24, 32, 48];
 const STORAGES = [256, 512, 1000, 2000];
 const CONDITIONS: Condition[] = ['open-box', 'like-new', 'excellent', 'good'];
+const MACBOOK_MODELS = ['MacBook Pro', 'MacBook Air', 'MacBook Neo'];
+const IPAD_MODELS = ['iPad Pro', 'iPad Air', 'iPad mini', 'iPad'];
 
 function FilterCheckbox({ label, checked, onChange }: { label: string; checked: boolean; onChange: () => void }) {
   return (
@@ -88,6 +90,7 @@ export function CategoryPage() {
   const [selectedChips, setSelectedChips] = useState<Set<string>>(new Set());
   const [selectedRam, setSelectedRam] = useState<Set<number>>(new Set());
   const [selectedStorage, setSelectedStorage] = useState<Set<number>>(new Set());
+  const [selectedModels, setSelectedModels] = useState<Set<string>>(new Set());
   const [searchQ, setSearchQ] = useState('');
 
   const toggleSet = <T,>(set: Set<T>, value: T): Set<T> => {
@@ -96,7 +99,7 @@ export function CategoryPage() {
     return next;
   };
 
-  const activeFilters = selectedConditions.size + selectedChips.size + selectedRam.size + selectedStorage.size +
+  const activeFilters = selectedConditions.size + selectedChips.size + selectedRam.size + selectedStorage.size + selectedModels.size +
     (priceRange[0] > 0 || priceRange[1] < 4500 ? 1 : 0);
 
   const clearFilters = () => {
@@ -104,6 +107,7 @@ export function CategoryPage() {
     setSelectedChips(new Set());
     setSelectedRam(new Set());
     setSelectedStorage(new Set());
+    setSelectedModels(new Set());
     setPriceRange([0, 4500]);
     setSearchQ('');
   };
@@ -116,6 +120,7 @@ export function CategoryPage() {
     if (selectedChips.size) pool = pool.filter(p => selectedChips.has(p.chip));
     if (selectedRam.size) pool = pool.filter(p => p.ram && selectedRam.has(p.ram));
     if (selectedStorage.size) pool = pool.filter(p => p.storage && selectedStorage.has(p.storage));
+    if (selectedModels.size) pool = pool.filter(p => [...selectedModels].some(m => p.name.includes(m)));
 
     return [...pool].sort((a, b) => {
       if (sortBy === 'price-asc') return a.price - b.price;
@@ -125,7 +130,7 @@ export function CategoryPage() {
       if (sortBy === 'newest') return b.year - a.year;
       return (b.featured ? 1 : 0) - (a.featured ? 1 : 0);
     });
-  }, [categoryKey, searchQ, priceRange, selectedConditions, selectedChips, selectedRam, selectedStorage, sortBy]);
+  }, [categoryKey, searchQ, priceRange, selectedConditions, selectedChips, selectedRam, selectedStorage, selectedModels, sortBy]);
 
   if (!meta) {
     return (
@@ -138,6 +143,7 @@ export function CategoryPage() {
 
   const FilterPanel = () => (
     <div className="flex flex-col gap-6">
+      {/* Search */}
       <div>
         <div className="relative">
           <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2" style={{ color: '#6e6e73' }} />
@@ -152,22 +158,50 @@ export function CategoryPage() {
           />
         </div>
       </div>
+
+      {/* Model — MacBooks */}
+      {categoryKey === 'macbook' && (
+        <div>
+          <div style={{ fontSize: '13px', fontWeight: 600, color: '#1d1d1f', letterSpacing: '0.04em', textTransform: 'uppercase', marginBottom: '4px' }}>Model</div>
+          {MACBOOK_MODELS.map(m => (
+            <FilterCheckbox key={m} label={m} checked={selectedModels.has(m)} onChange={() => setSelectedModels(s => toggleSet(s, m))} />
+          ))}
+        </div>
+      )}
+
+      {/* Model — iPads */}
+      {categoryKey === 'ipad' && (
+        <div>
+          <div style={{ fontSize: '13px', fontWeight: 600, color: '#1d1d1f', letterSpacing: '0.04em', textTransform: 'uppercase', marginBottom: '4px' }}>Model</div>
+          {IPAD_MODELS.map(m => (
+            <FilterCheckbox key={m} label={m} checked={selectedModels.has(m)} onChange={() => setSelectedModels(s => toggleSet(s, m))} />
+          ))}
+        </div>
+      )}
+
+      {/* Price */}
       <div>
         <div style={{ fontSize: '13px', fontWeight: 600, color: '#1d1d1f', letterSpacing: '0.04em', textTransform: 'uppercase', marginBottom: '4px' }}>Price</div>
         <RangeSlider min={0} max={4500} value={priceRange} onChange={setPriceRange} />
       </div>
+
+      {/* Condition */}
       <div>
         <div style={{ fontSize: '13px', fontWeight: 600, color: '#1d1d1f', letterSpacing: '0.04em', textTransform: 'uppercase', marginBottom: '4px' }}>Condition</div>
         {CONDITIONS.map(c => (
           <FilterCheckbox key={c} label={CONDITION_LABELS[c]} checked={selectedConditions.has(c)} onChange={() => setSelectedConditions(s => toggleSet(s, c))} />
         ))}
       </div>
+
+      {/* Chip */}
       <div>
         <div style={{ fontSize: '13px', fontWeight: 600, color: '#1d1d1f', letterSpacing: '0.04em', textTransform: 'uppercase', marginBottom: '4px' }}>Processor</div>
         {CHIPS.map(c => (
           <FilterCheckbox key={c} label={c} checked={selectedChips.has(c)} onChange={() => setSelectedChips(s => toggleSet(s, c))} />
         ))}
       </div>
+
+      {/* RAM */}
       {(categoryKey === 'macbook' || categoryKey === 'imac') && (
         <div>
           <div style={{ fontSize: '13px', fontWeight: 600, color: '#1d1d1f', letterSpacing: '0.04em', textTransform: 'uppercase', marginBottom: '4px' }}>RAM</div>
@@ -176,12 +210,15 @@ export function CategoryPage() {
           ))}
         </div>
       )}
+
+      {/* Storage */}
       <div>
         <div style={{ fontSize: '13px', fontWeight: 600, color: '#1d1d1f', letterSpacing: '0.04em', textTransform: 'uppercase', marginBottom: '4px' }}>Storage</div>
         {STORAGES.map(s => (
           <FilterCheckbox key={s} label={s >= 1000 ? `${s / 1000}TB` : `${s}GB`} checked={selectedStorage.has(s)} onChange={() => setSelectedStorage(st => toggleSet(st, s))} />
         ))}
       </div>
+
       {activeFilters > 0 && (
         <button onClick={clearFilters} className="flex items-center gap-2 py-2.5 px-4 rounded-full justify-center" style={{ background: '#fff3f3', color: '#e53e3e', fontSize: '13px', fontWeight: 500 }}>
           <X size={13} /> Clear all filters ({activeFilters})
@@ -192,6 +229,7 @@ export function CategoryPage() {
 
   return (
     <>
+      {/* Hero */}
       <section className="relative overflow-hidden" style={{ paddingTop: '56px' }}>
         <div className="relative h-64 md:h-80 overflow-hidden">
           <img src={meta.image} alt={meta.label} className="w-full h-full object-cover" />
@@ -214,6 +252,7 @@ export function CategoryPage() {
         </div>
       </section>
 
+      {/* Category trust bar */}
       <section style={{ background: '#fff', borderBottom: '1px solid rgba(0,0,0,0.06)' }}>
         <div className="max-w-[1200px] mx-auto px-6 py-8">
           <div className="grid grid-cols-3 gap-6">
@@ -231,8 +270,11 @@ export function CategoryPage() {
         </div>
       </section>
 
+      {/* Products — sidebar layout on desktop */}
       <section style={{ background: '#f5f5f7', padding: '48px 0' }}>
         <div className="max-w-[1200px] mx-auto px-6">
+
+          {/* Toolbar row */}
           <div className="flex items-center justify-between mb-6 flex-wrap gap-4">
             <div>
               <h2 style={{ fontSize: '1.6rem', fontWeight: 700, color: '#1d1d1f', letterSpacing: '-0.025em' }}>
@@ -240,7 +282,9 @@ export function CategoryPage() {
               </h2>
               <p style={{ fontSize: '14px', color: '#6e6e73', marginTop: '2px' }}>All certified, tested, and warranted.</p>
             </div>
+
             <div className="flex items-center gap-3">
+              {/* Mobile: open drawer */}
               <button
                 className="flex items-center gap-2 px-4 py-2.5 rounded-full lg:hidden"
                 style={{ background: '#0071e3', fontSize: '14px', color: '#fff', fontWeight: 500 }}
@@ -249,6 +293,8 @@ export function CategoryPage() {
                 <SlidersHorizontal size={15} /> Filters
                 {activeFilters > 0 && <span className="w-5 h-5 rounded-full flex items-center justify-center" style={{ background: '#fff', color: '#0071e3', fontSize: '11px', fontWeight: 600 }}>{activeFilters}</span>}
               </button>
+
+              {/* Sort dropdown */}
               <div className="relative">
                 <select
                   value={sortBy}
@@ -268,6 +314,7 @@ export function CategoryPage() {
             </div>
           </div>
 
+          {/* Active filter chips */}
           {activeFilters > 0 && (
             <div className="flex gap-2 flex-wrap mb-5">
               {[...selectedConditions].map(c => (
@@ -293,7 +340,10 @@ export function CategoryPage() {
             </div>
           )}
 
+          {/* Two-column layout: sidebar (desktop) + product grid */}
           <div className="flex gap-8 items-start">
+
+            {/* LEFT SIDEBAR — always visible on desktop (lg+) */}
             <aside
               className="hidden lg:block flex-shrink-0 sticky top-20"
               style={{ width: '260px', background: '#fff', borderRadius: '16px', padding: '24px', boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}
@@ -307,6 +357,7 @@ export function CategoryPage() {
               <FilterPanel />
             </aside>
 
+            {/* PRODUCT GRID */}
             <div className="flex-1 min-w-0">
               {filtered.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-24 text-center">
@@ -331,6 +382,7 @@ export function CategoryPage() {
         </div>
       </section>
 
+      {/* MOBILE filter drawer — slides from right */}
       <AnimatePresence>
         {mobileFiltersOpen && (
           <>
@@ -373,6 +425,7 @@ export function CategoryPage() {
         )}
       </AnimatePresence>
 
+      {/* Buying guides */}
       {guides.length > 0 && (
         <section style={{ background: '#fff', padding: '64px 0' }}>
           <div className="max-w-[1200px] mx-auto px-6">
@@ -413,6 +466,7 @@ export function CategoryPage() {
         </section>
       )}
 
+      {/* Promo banner */}
       <section style={{ background: '#1d1d1f', padding: '64px 0' }}>
         <div className="max-w-[900px] mx-auto px-6 text-center">
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}>

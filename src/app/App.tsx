@@ -12,6 +12,9 @@ import { ContactPage } from './pages/ContactPage';
 import { FAQPage } from './pages/FAQPage';
 import { NotFoundPage } from './pages/NotFoundPage';
 import { ComparePage } from './pages/ComparePage';
+import { AboutPage } from './pages/AboutPage';
+import { CertificationPage } from './pages/CertificationPage';
+import { PrivacyPage } from './pages/PrivacyPage';
 
 const routes = [
   { path: '/', index: true, Component: HomePage },
@@ -26,6 +29,9 @@ const routes = [
   { path: '/contact', Component: ContactPage },
   { path: '/faq', Component: FAQPage },
   { path: '/compare', Component: ComparePage },
+  { path: '/about', Component: AboutPage },
+  { path: '/certification', Component: CertificationPage },
+  { path: '/privacy', Component: PrivacyPage },
   { path: '*', Component: NotFoundPage },
 ];
 
